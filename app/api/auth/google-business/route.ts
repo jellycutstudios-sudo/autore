@@ -6,7 +6,8 @@ import { redirect } from "next/navigation";
  */
 export async function GET() {
   const clientId = process.env.GOOGLE_CLIENT_ID!;
-  const redirectUri = `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/google-business/callback`;
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "");
+  const redirectUri = `${baseUrl}/api/auth/google-business/callback`;
 
   const scopes = [
     "https://www.googleapis.com/auth/business.manage",

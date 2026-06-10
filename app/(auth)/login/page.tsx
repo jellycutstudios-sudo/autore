@@ -47,10 +47,11 @@ export default function LoginPage() {
   async function handleGoogleSignIn() {
     setGoogleLoading(true);
     setError(null);
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "");
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/callback`,
+        redirectTo: `${baseUrl}/api/auth/callback`,
       },
     });
     if (error) {
