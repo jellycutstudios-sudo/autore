@@ -44,17 +44,17 @@ export default async function ConnectPage({
       <div>
         <Link
           href="/dashboard"
-          className="inline-flex items-center gap-1 text-xs font-bold text-slate-450 hover:text-indigo-600 transition-colors mb-3"
+          className="inline-flex items-center gap-1 text-xs font-bold text-gray-500 hover:text-black transition-colors mb-3"
         >
           <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
           </svg>
           Back to dashboard
         </Link>
-        <h1 className="text-2xl font-black tracking-tight text-slate-900">
+        <h1 className="text-2xl font-black tracking-tight text-black">
           Connected Locations
         </h1>
-        <p className="text-sm text-slate-500 mt-1">
+        <p className="text-sm text-gray-500 mt-1">
           Manage your Google Business Profile connection and auto-reply status.
         </p>
       </div>
@@ -62,7 +62,7 @@ export default async function ConnectPage({
       {/* Alerts */}
       {params.success === "true" && (
         <div className="alert alert-success" role="alert">
-          <svg className="w-5 h-5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+          <svg className="w-5 h-5 text-black shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
           <span>Google Business Profile connected successfully!</span>
@@ -80,14 +80,14 @@ export default async function ConnectPage({
       {/* Connect Google card */}
       <div className="card">
         <div className="flex items-center gap-3.5 mb-5">
-          <div className="w-11 h-11 bg-indigo-50 border border-indigo-100 rounded-xl flex items-center justify-center shrink-0">
-            <svg viewBox="0 0 24 24" className="w-5 h-5 text-indigo-600">
+          <div className="w-11 h-11 bg-gray-100 border border-gray-200 rounded flex items-center justify-center shrink-0">
+            <svg viewBox="0 0 24 24" className="w-5 h-5 text-black">
               <path fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349m-16.5 11.65V9.35m0 0a3.001 3.001 0 003.75-.615A2.993 2.993 0 009.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 002.25 1.016c.896 0 1.7-.393 2.25-1.015a3.001 3.001 0 003.75.614m-16.5 0L12 2.65l7.5 6.7m-9 11.65v-6a.75.75 0 01.75-.75h1.5a.75.75 0 01.75.75v6" />
             </svg>
           </div>
           <div>
-            <p className="font-bold text-sm text-slate-800">Google Business Profile</p>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <p className="font-bold text-sm text-black">Google Business Profile</p>
+            <p className="text-xs text-gray-500 mt-0.5">
               {hasConnection
                 ? `${connections!.length} account${connections!.length !== 1 ? "s" : ""} connected`
                 : "Not connected yet"}
@@ -105,14 +105,14 @@ export default async function ConnectPage({
       {/* Location list */}
       {(locations as Location[] | null)?.length ? (
         <div className="space-y-3.5">
-          <h2 className="font-extrabold text-xs text-slate-400 uppercase tracking-wider">
+          <h2 className="font-extrabold text-xs text-gray-450 uppercase tracking-wider">
             Your Locations
           </h2>
           <div className="space-y-3">
             {(locations as Location[]).map((loc) => (
-              <div key={loc.id} className="card flex items-start gap-4 p-4.5">
-                <div className="w-9 h-9 rounded-xl bg-slate-50 border border-slate-200/70 flex items-center justify-center shrink-0">
-                  <svg className="w-4.5 h-4.5 text-slate-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <div key={loc.id} className="card flex items-start gap-4 p-4">
+                <div className="w-9 h-9 rounded bg-gray-100 border border-gray-250 flex items-center justify-center shrink-0">
+                  <svg className="w-4.5 h-4.5 text-black" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
                     <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
                   </svg>
@@ -120,11 +120,11 @@ export default async function ConnectPage({
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <p className="font-bold text-sm text-slate-800 leading-tight">
+                      <p className="font-bold text-sm text-black leading-tight">
                         {loc.business_name}
                       </p>
                       {loc.address && (
-                        <p className="text-xs text-slate-500 mt-1 leading-normal">{loc.address}</p>
+                        <p className="text-xs text-gray-500 mt-1 leading-normal">{loc.address}</p>
                       )}
                     </div>
                     <span
@@ -142,12 +142,12 @@ export default async function ConnectPage({
         </div>
       ) : hasConnection ? (
         <div className="alert alert-info text-xs">
-          <svg className="w-5 h-5 text-indigo-500 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+          <svg className="w-5 h-5 text-black shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
           </svg>
           <div>
             <p className="font-bold mb-0.5">Locations syncing…</p>
-            <p className="text-slate-605 leading-normal">
+            <p className="text-gray-600 leading-normal">
               Your connected profile locations will appear here after the first sync completes (typically within a few minutes).
             </p>
           </div>
