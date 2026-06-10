@@ -99,5 +99,77 @@ export async function GET(request: NextRequest) {
     );
   }
 
+  // Fetch Google Business accounts
+  let accounts: { name: string }[] = [];
+  try {
+    const accountsRes = await fetch(
+      "https://mybusinessbusinessinformation.googleapis.com/v1/accounts",
+      { headers: { Authorization: `Bearer ${tokens.access_token}` } }
+    );
+    if (accountsRes.ok) {
+      const data = (await accountsRes.json()) as { accounts?: { name: string }[] };
+      accounts = data.accounts ?? [];
+    } else {
+      console.error("Failed to fetch Google Business accounts:", await accountsRes.text());
+    }
+  } catch (err) {
+    console.error("Error fetching Google Business accounts:", err);
+  }
+
+  // Fetch and upsert locations for each account
+  for (const account of accounts) {
+    try {
+      const locationsRes = await fetch(
+        `https://mybusinessbusinessinformation.googleapis.com/v1/${account.name}/locations?readMask=name,title,storefrontAddress`,
+        { headers: { Authorization: `Bearer ${tokens.access_token}` } }
+      );
+      if (locationsRes.ok) {
+        const data = (await locationsRes.json()) as {
+          locations?: {
+            name: string;
+            title: string;
+            storefrontAddress?: {
+              addressLines?: string[];
+              locality?: string;
+              administrativeArea?: string;
+              postalCode?: string;
+              regionCode?: string;
+            };
+          }[];
+        };
+        const locations = data.locations ?? [];
+
+        for (const loc of locations) {
+          // Construct the full google_location_id (e.g. accounts/{accountId}/locations/{locationId})
+          const googleLocationId = `${account.name}/${loc.name}`;
+
+          // Construct formatted address
+          const addr = loc.storefrontAddress;
+          const addressLines = addr?.addressLines ?? [];
+          const cityStr = [addr?.locality, addr?.administrativeArea, addr?.postalCode]
+            .filter(Boolean)
+            .join(", ");
+          const fullAddress = [...addressLines, cityStr].filter(Boolean).join(", ");
+
+          // Upsert into locations table
+          await adminSupabase.from("locations").upsert(
+            {
+              user_id: user.id,
+              google_location_id: googleLocationId,
+              business_name: loc.title,
+              address: fullAddress || null,
+              auto_reply_enabled: true,
+            },
+            { onConflict: "user_id,google_location_id" }
+          );
+        }
+      } else {
+        console.error(`Failed to fetch locations for ${account.name}:`, await locationsRes.text());
+      }
+    } catch (err) {
+      console.error(`Error fetching locations for ${account.name}:`, err);
+    }
+  }
+
   return NextResponse.redirect(new URL("/connect?success=true", request.url));
 }
