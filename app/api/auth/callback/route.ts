@@ -20,14 +20,18 @@ export async function GET(request: Request) {
             return cookieStore.getAll();
           },
           setAll(cookiesToSet) {
-            try {
-              cookiesToSet.forEach(({ name, value, options }) => {
+            cookiesToSet.forEach(({ name, value, options }) => {
+              try {
                 cookieStore.set(name, value, options);
+              } catch {
+                // Ignore read-only cookieStore error in GET handlers
+              }
+              try {
                 response.cookies.set(name, value, options);
-              });
-            } catch {
-              // ignore
-            }
+              } catch {
+                // Ignore
+              }
+            });
           },
         },
       }
