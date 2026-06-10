@@ -8,7 +8,7 @@ export const generateReply = inngest.createFunction(
     name: "Generate AI Reply for Review",
     triggers: [{ event: "review/created" }],
     retries: 2,
-    concurrency: { limit: 10 },
+    concurrency: { limit: 5 },
   },
 
   async ({ event, step }) => {
