@@ -60,40 +60,60 @@ export function ReviewCard({
     year: "numeric",
   });
 
+  const initials = authorName
+    ? authorName
+        .split(" ")
+        .map((n) => n[0])
+        .slice(0, 2)
+        .join("")
+        .toUpperCase()
+    : "U";
+
+  const borderQuoteColor = isLowRating ? "border-rose-300" : "border-indigo-200";
+
   return (
     <article className="card" aria-label={`Review from ${authorName}`}>
-      {/* Header */}
-      <div className="flex items-start justify-between gap-3 mb-3">
-        <div>
-          <div className="flex items-center gap-2 mb-1">
+      {/* Header with Avatar and details */}
+      <div className="flex items-start gap-3 mb-4">
+        <div className="w-9 h-9 rounded-full bg-slate-100 border border-slate-200 text-slate-650 font-bold text-xs flex items-center justify-center shrink-0 select-none">
+          {initials}
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center justify-between gap-2">
+            <p className="font-bold text-sm text-slate-800 truncate">{authorName}</p>
+            <span className="text-[10px] text-slate-400 font-semibold">{formattedDate}</span>
+          </div>
+          <div className="flex items-center gap-2 mt-0.5">
             <StarRating rating={starRating} size="sm" />
+            <span className="text-xs text-slate-400">· {businessName}</span>
             {isLowRating && (
-              <span className="badge badge-danger text-xs">⚠ Needs attention</span>
+              <span className="badge badge-danger text-[9px] py-0.5 px-2">⚠ Needs attention</span>
             )}
           </div>
-          <p className="font-semibold text-sm text-black">{authorName}</p>
-          <p className="text-xs text-gray-400">{businessName} · {formattedDate}</p>
         </div>
       </div>
 
       {/* Review text */}
       {reviewText ? (
-        <blockquote className="text-sm text-gray-700 leading-relaxed border-l-2 border-gray-200 pl-3 mb-4 italic">
+        <blockquote className={`text-sm text-slate-600 leading-relaxed border-l-2 ${borderQuoteColor} pl-3 mb-4 italic`}>
           &ldquo;{reviewText}&rdquo;
         </blockquote>
       ) : (
-        <p className="text-sm text-gray-400 italic mb-4">No written review.</p>
+        <p className="text-sm text-slate-450 italic mb-4 pl-3 border-l-2 border-slate-150">No written review.</p>
       )}
 
       {/* AI Draft section */}
-      <div className="border-t border-gray-100 pt-4">
-        <div className="flex items-center gap-2 mb-2">
-          <span className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+      <div className="border-t border-slate-100 pt-4 mt-2">
+        <div className="flex items-center justify-between mb-2.5">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+            <svg className="w-3.5 h-3.5 text-indigo-500" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+            </svg>
             AI Draft Reply
           </span>
           {isGenerating && (
-            <span className="text-xs text-gray-400 animate-pulse">
-              Generating…
+            <span className="text-[10px] font-bold text-slate-450 animate-pulse">
+              Generating draft…
             </span>
           )}
         </div>
@@ -103,7 +123,7 @@ export function ReviewCard({
         ) : (
           <textarea
             id={`draft-${replyId}`}
-            className="textarea text-sm"
+            className="textarea text-sm bg-slate-50/30"
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
             rows={4}
@@ -127,20 +147,28 @@ export function ReviewCard({
           type="button"
           onClick={handlePost}
           disabled={loading || !draft.trim()}
-          className="btn btn-primary btn-block mt-4"
+          className="btn btn-primary btn-block mt-4 flex items-center justify-center gap-2"
           aria-label="Post this reply to Google"
         >
           {loading ? (
             <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
           ) : (
-            "Post Reply to Google"
+            <>
+              <span>Post Reply to Google</span>
+              <svg className="w-4 h-4 opacity-80" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
+              </svg>
+            </>
           )}
         </button>
       )}
 
       {posted && (
-        <div className="alert alert-success mt-4 text-sm font-medium flex items-center gap-2">
-          <span>✓</span> Reply posted successfully!
+        <div className="alert alert-success mt-4 text-xs font-semibold flex items-center justify-center gap-1.5 shadow-sm">
+          <svg className="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+          </svg>
+          Reply posted successfully!
         </div>
       )}
     </article>
