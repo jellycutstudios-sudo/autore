@@ -16,7 +16,10 @@ export async function proxy(request: NextRequest) {
     "/favicon.ico",
   ];
 
+  console.log(`[Proxy] Intercepting request for: ${pathname}`);
+
   if (PUBLIC_PATHS.some((p) => pathname.startsWith(p))) {
+    console.log(`[Proxy] Public path detected. Allowing pass-through: ${pathname}`);
     return NextResponse.next();
   }
 
@@ -52,26 +55,34 @@ export async function proxy(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
+  console.log(`[Proxy] User session retrieved: ${user ? user.email : "NULL"}`);
+
   if (!user) {
-    // Not logged in → send to login
+    console.log(`[Proxy] Unauthenticated. Redirecting to /login`);
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
   // Check subscription status from users table
-  const { data: userData } = await supabase
+  const { data: userData, error: userDbError } = await supabase
     .from("users")
     .select("subscription_status")
     .eq("id", user.id)
     .single();
 
+  if (userDbError) {
+    console.error(`[Proxy] Error querying users table:`, userDbError);
+  }
+
   const isSubscribed = userData?.subscription_status === "active";
+  console.log(`[Proxy] Subscription status: ${userData?.subscription_status} (isSubscribed: ${isSubscribed})`);
 
   // Logged in but no subscription → redirect to pricing
-  // (Allow /pricing itself through if they're somehow here)
   if (!isSubscribed && !pathname.startsWith("/pricing") && process.env.NODE_ENV === "production") {
+    console.log(`[Proxy] Inactive subscription in production. Redirecting to /pricing`);
     return NextResponse.redirect(new URL("/pricing", request.url));
   }
 
+  console.log(`[Proxy] Allowing authorized access to dashboard/resource`);
   return response;
 }
 
